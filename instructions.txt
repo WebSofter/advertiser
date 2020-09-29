@@ -1,0 +1,192 @@
+**********************GitLab********************
+git config --global user.name "David Amirkhanov"
+git config --global user.email "mail.websofter@gmail.com"
+
+git remote add git@gitlab.com:ludovik17/advertiser.git
+git pull git@gitlab.com:ludovik17/advertiser.git master --allow-unrelated-histories
+git push git@gitlab.com:ludovik17/advertiser.git master
+
+git status && git add . && git commit -m "Upgrade packages in requirments.txt" && git push
+**********************Postgres********************
+sudo -i -u postgres 
+
+CREATE ROLE advertiser WITH LOGIN PASSWORD '123456';
+CREATE DATABASE advertiser WITH OWNER advertiser;
+\c advertiser;
+
+psql -h localhost -p 5432 -U advertiser -f db_dump.sql advertiser
+psql -h localhost -p 5432 -U advertiser -d advertiser
+
+
+sudo ufw allow 5432/tcp
+/etc/postgresql/12/main/pg_hba.conf
+host all all 31.173.28.231/24 trust
+/etc/postgresql/12/main/postgresql.conf
+listen_addresses='*'
+sudo systemctl restart postgresql.service
+
+#Charset Postgres
+update pg_database set encoding = pg_char_to_encoding('UTF8') where datname = 'advertiser'
+SET CLIENT_ENCODING TO 'UTF8';
+psql -c '\l'
+psql -c 'DROP DATABASE advertiser'
+
+CREATE DATABASE "advertiser" WITH OWNER "advertiser" ENCODING 'UTF8' LC_COLLATE = 'ru_RU.UTF-8' LC_CTYPE = 'ru_RU.UTF-8' TEMPLATE = template0;
+pg_restore -U advertiser PGCLIENTENCODING=latin1 psql -f advertiser.sql advertiser
+
+#1. create database dump:
+pg_dump advertiser > advertiser.sql
+#this will save your database in sql format, in encoding you currently have.
+#2. delete database (or rename it):
+DROP DATABASE advertiser
+#3. if you have enough storage to do it I recommend leaving old database until you make sure everything is OK with new one, rename it:
+ALTER DATABASE your_database RENAME TO your_database_backup;
+#4. create database with new encoding:
+CREATE DATABASE your_database WITH ENCODING 'UNICODE' TEMPLATE=template0;
+#or
+CREATE DATABASE "advertiser" WITH OWNER "advertiser" ENCODING 'UTF8' LC_COLLATE = 'ru_RU.UTF-8' LC_CTYPE = 'ru_RU.UTF-8' TEMPLATE = template0;
+#5. import data from dump created before:
+PGCLIENTENCODING=YOUR_OLD_ENCODING psql -f your_database.sql your_database
+
+**********************Python/Django********************
+alias pip=pip3
+alias python=python3
+
+pip install --upgrade pip
+pip freeze > requirements.txt
+
+django-admin startproject advertiser && cd advertiser
+python manage.py startapp user
+
+python manage.py migrate
+python manage.py migrate user
+python manage.py makemigrations
+python manage.py runserver2
+python manage.py runserver 0.0.0.0:8000
+python manage.py runsslserver 0.0.0.0:8000
+/var/www/crm.wsofter.ru/public_html/advertiser/backend/env/bin/python3 manage.py runserver 0.0.0.0:8000
+python manage.py createsuperuser
+alias python=python3 && alias pip=pip3
+*******************PM2**********************
+pm2 start echosystem.config.json
+{
+   "apps":
+      [{
+        "name": "django_back",
+        "script": "manage.py",
+        "args": ["runserver", "0.0.0.0:8000"],
+        "exec_mode": "fork",
+        "instances": "1",
+        "wait_ready": true,
+        "autorestart": false,
+        "max_restarts": 5,
+        "interpreter" : "python3"
+      }]
+}
+pm2 start start.sh --name django_back
+python3 manage.py runserver 0.0.0.0:8000
+
+*******************VUE*******************
+const fs = require('fs');
+module.exports = {
+    runtimeCompiler: true,
+    productionSourceMap: false,
+
+    publicPath: process.env.NODE_ENV === 'production'
+        ? './'
+        : '/',
+        // Configure the webpack dev server behavior.
+        devServer: {
+            //open: process.platform === 'darwin',
+            host: 'crm.wsofter.ru',
+            port: 4545,
+            https: true,
+            hotOnly: true,
+            // See https://github.com/vuejs/vue-docs-zh-cn/blob/master/vue-cli/cli-service.md#Configuration agent
+            https: {
+                key: fs.readFileSync('/etc/letsencrypt/live/crm.wsofter.ru/privkey.pem'),
+                cert: fs.readFileSync('/etc/letsencrypt/live/crm.wsofter.ru/fullchain.pem'),
+                //ca: fs.readFileSync('C:/Users/User/AppData/Local/mkcert/rootCA.pem')
+            },
+            proxy: {
+                '/api': {
+                    target: `https://92.63.100.252:8280`,
+                    changeOrigin: true,
+                    secure: false,
+                    pathRewrite: {
+                        "^/api": ""
+                    }
+                }
+            },
+            disableHostCheck: true
+        },
+}
+
+*******************SErvice********************
+systemctl stop kestrel-filebox.service && service apache2 stop && service mysql stop && service tomcat stop && service php7.4-fpm stop && service nginx restart
+
+*******************Uuntu**************
+top
+htop
+
+
+*****************NGINX***************
+server {
+
+	root /var/www/crm.wsofter.ru/public_html/advertiser/frontend/public;
+	index index.html index.php;
+	
+	access_log /var/www/crm.wsofter.ru/logs/crm.wsofter.ru.access.log;
+	error_log /var/www/crm.wsofter.ru/logs/crm.wsofter.ru.error.log;
+
+	server_name crm.wsofter.ru www.crm.wsofter.ru;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    #    location / {
+	#		error_page 404 /index.php;
+	#		try_files $uri $uri/ =404;
+	#		# Обработка php файлов с помощью fpm
+	#		include /etc/nginx/fastcgi.conf;
+	#		fastcgi_pass unix:/run/php/php7.4-fpm.sock; 
+    #    }
+		
+    #location ~ \.php$ {
+    #    root /var/www/crm.wsofter.ru/public_html;
+    #    fastcgi_pass   unix:/var/run/php/php7.4-fpm.sock;
+    #    fastcgi_index  index.php;
+    #    fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+    #    include        fastcgi_params;
+    #}
+
+
+    location ~ /\.ht {
+      deny  all;
+    }
+
+    listen [::]:443 ssl; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/crm.wsofter.ru/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/crm.wsofter.ru/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+
+server {
+
+    if ($host = crm.wsofter.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    listen [::]:80;
+
+    server_name crm.wsofter.ru www.crm.wsofter.ru;
+    return 404; # managed by Certbot
+
+}

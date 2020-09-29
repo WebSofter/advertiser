@@ -1,0 +1,38 @@
+version: '3.7'
+
+services: 
+    adv_db:
+        image: postgres:12
+        volumes:
+            - pg_data:/var/lib/postgresql/data/
+        environment:
+            POSTGRES_PASSWORD: 123456
+            POSTGRES_USER: postgres
+            POSTGRES_DB: postgres
+        ports:
+            - 5432:5432
+    django:
+        container_name: adv_backend
+        build:
+            context: ./backend/
+            dockerfile: Dockerfile
+        command: bash -c "python /home/backend/manage.py migrate --noinput &&
+                        python /home/backend/manage.py runserver 0.0.0.0:8000"
+        volumes:
+            - ./backend:/home/backend/
+        ports:
+            - 8000:8000
+        depends_on: 
+            - adv_db
+    vue:
+        container_name: adv_frontend
+        build:
+            context: ./frontend/
+            dockerfile: Dockerfile
+        #command: bash -c "npm run serve"
+        volumes:
+            - ./frontend:/home/frontend/
+        ports:
+            - 4545:4545
+volumes:
+    pg_data:

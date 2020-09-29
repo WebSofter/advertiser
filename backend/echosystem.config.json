@@ -1,0 +1,16 @@
+{
+   "apps":
+      [{
+        "name": "django_back",
+        "script": "manage.py",
+        "args": ["runserver", "0.0.0.0:8000"],
+        "exec_mode": "fork",
+        "instances": "1",
+        "wait_ready": true,
+        "autorestart": true,
+        "max_restarts": 5,
+        "interpreter" : "pipenv",
+        "interpreter_args": "/var/www/crm.wsofter.ru/public_html/advertiser/backend/env/bin/python3",
+        "watch": true
+      }]
+}
