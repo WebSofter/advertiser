@@ -1,7 +1,7 @@
 
 
 ### Клонируем исходники с GitHub
-$ git clone https://gitlab.com/ludovik17/advertiser.git
+$ git clone git@github.com:WebSofter/advertiser.git
 
 
 ### Задаем алиасы
