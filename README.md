@@ -34,7 +34,7 @@ $ systemctl status postgresql.service
 $ systemctl status postgresql@12-main.service
 $ systemctl is-enabled postgresql
 
-## Ставим зависимости Django - проекта
+### Ставим зависимости Django - проекта
 $ python -m pip install --upgrade --user pip setuptools virtualenv
 
 #### создаем виртуальнео окружение python
@@ -63,7 +63,7 @@ $ pip install pycairo
 $ sudo ufw allow 8000
 
 
-## Ставим Nginx
+### Ставим Nginx
 $ sudo apt update
 $ sudo apt install nginx
 #Прописываем в конфигурации сайта Nginx
@@ -77,7 +77,7 @@ $ sudo ufw allow 'Nginx HTTP'
 $ sudo ufw allow 80
 $ sudo ufw allow 443
 
-## Настройка Node.js и фронта
+### Настройка Node.js и фронта
 $ cd frontend
 $ npm install -g npm@latest
 $ rm packahe-lock.json
@@ -94,7 +94,7 @@ $ pm2 start frontend/start.json --name vue
 $ pm2 list|start|restart|stop|delete
 
 
-## Ставим Ubuntu на локалку или VirtualBox(в настройках сети указываем "Сетевой адаптер")
+### Ставим Ubuntu на локалку или VirtualBox(в настройках сети указываем "Сетевой адаптер")
 
 1. Настройка Firewall и SSH-доступа к серверу
 $ sudo ufw enable
