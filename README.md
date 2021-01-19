@@ -1,18 +1,4 @@
-## Ставим Ubuntu на локалку или VirtualBox(в настройках сети указываем "Сетевой адаптер")**
 
-1. Настройка Firewall и SSH-доступа к серверу
-$ sudo ufw enable
-$ sudo ufw default deny incoming
-$ sudo ufw default allow outgoing
-$ sudo ufw app list
-$ sudo ufw allow ssh
-$ sudo ufw allow 22
-$ sudo ufw allow 2222
-
-$ sudo apt install net-tools
-$ ifconfig
-$ 10.0.2.15 panel.loc
-$ ssh-copy-id panel.loc
 
 ## Клонируем исходники с GitHub
 $ git clone https://gitlab.com/ludovik17/advertiser.git
@@ -107,6 +93,22 @@ $ pm2 start backend/advertiser/start.sh --name django
 $ pm2 start frontend/start.json --name vue
 $ pm2 list|start|restart|stop|delete
 
+
+## Ставим Ubuntu на локалку или VirtualBox(в настройках сети указываем "Сетевой адаптер")
+
+1. Настройка Firewall и SSH-доступа к серверу
+$ sudo ufw enable
+$ sudo ufw default deny incoming
+$ sudo ufw default allow outgoing
+$ sudo ufw app list
+$ sudo ufw allow ssh
+$ sudo ufw allow 22
+$ sudo ufw allow 2222
+
+$ sudo apt install net-tools
+$ ifconfig
+$ 10.0.2.15 panel.loc
+$ ssh-copy-id panel.loc
 
 
 
