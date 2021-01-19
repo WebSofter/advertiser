@@ -1,14 +1,14 @@
 
 
-## Клонируем исходники с GitHub
+### Клонируем исходники с GitHub
 $ git clone https://gitlab.com/ludovik17/advertiser.git
 
 
-## Задаем алиасы
+### Задаем алиасы
 $ alias python=python3
 $ alias pip=pip3
 
-## Ставим Postgress 12
+### Ставим Postgress 12
 $ sudo apt update
 $ sudo apt -y install vim bash-completion wget
 $ sudo apt -y upgrade
@@ -49,15 +49,15 @@ $ python3 runserver 0.0.0.0:8000
 $ pip install pip-review
 $ pip-review --local --interactive
 
-# нужно будет еще учитывать системные требования модулей Django и пакеты Ubuntu, 
-# которых затребует Django  которых потребуется установить, анализируя консоль вывода ошибок Django
-# Пример:
-# 0). Ставим инструменты разработки Python
+**нужно будет еще учитывать системные требования модулей Django и пакеты Ubuntu, 
+которых затребует Django  которых потребуется установить, анализируя консоль вывода ошибок Django
+Пример:
+0). Ставим инструменты разработки Python
 $ apt-get install python-dev
-# 1). Если в  процессе появляется ошибка, связанная с компиляцией pycairo для Linux, то выполняем
+1). Если в  процессе появляется ошибка, связанная с компиляцией pycairo для Linux, то выполняем
 $ sudo apt-get install libcairo2-dev libjpeg-dev libgif-dev
 $ pip install pycairo
-
+**
 
 #### Настройка Firewall для Django
 $ sudo ufw allow 8000
