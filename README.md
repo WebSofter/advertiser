@@ -1,4 +1,4 @@
-**Ставим Ubuntu на локалку или VirtualBox(в настройках сети указываем "Сетевой адаптер")**
+## Ставим Ubuntu на локалку или VirtualBox(в настройках сети указываем "Сетевой адаптер")**
 
 1. Настройка Firewall и SSH-доступа к серверу
 $ sudo ufw enable
@@ -14,15 +14,15 @@ $ ifconfig
 $ 10.0.2.15 panel.loc
 $ ssh-copy-id panel.loc
 
-2. Клонируем исходники с GitHub
+## Клонируем исходники с GitHub
 $ git clone https://gitlab.com/ludovik17/advertiser.git
 
 
-3. Задаем алиасы
+## Задаем алиасы
 $ alias python=python3
 $ alias pip=pip3
 
-4. Ставим Postgress 12
+## Ставим Postgress 12
 $ sudo apt update
 $ sudo apt -y install vim bash-completion wget
 $ sudo apt -y upgrade
@@ -32,26 +32,26 @@ $ echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main
 $ sudo apt update
 $ sudo apt -y install postgresql-12 postgresql-client-12
 
-4.1. Импорт БД Postgress(Если это необходимо)
+#### Импорт БД Postgress(Если это необходимо)
 $ psql 
 > CREATE DATABASE "advertiser" WITH OWNER "advertiser" ENCODING 'UTF8' LC_COLLATE = 'ru_RU.UTF-8' LC_CTYPE = 'ru_RU.UTF-8' TEMPLATE = template0;
 > -f advertiser.sql advertiser
 
-4.1. Создаем нового юзера Postgress
+#### Создаем нового юзера Postgress
 $ sudo su - postgres
 $ psql -c "alter user postgres with password '123456'"
 $ psql
 $ \conninfo
 
-4.2. Проверка
+#### Проверка
 $ systemctl status postgresql.service
 $ systemctl status postgresql@12-main.service
 $ systemctl is-enabled postgresql
 
-5. Ставим зависимости Django - проекта
+## Ставим зависимости Django - проекта
 $ python -m pip install --upgrade --user pip setuptools virtualenv
 
-# создаем виртуальнео окружение python
+#### создаем виртуальнео окружение python
 $ python -m virtualenv env
 $ source venv/bin/activate
 
@@ -59,7 +59,7 @@ $ pip install -r requirements.txt
 $ python3 manage.py migrate
 $ python3 runserver 0.0.0.0:8000
 
-# при необходимости обновляем пакеты
+#### при необходимости обновляем пакеты
 $ pip install pip-review
 $ pip-review --local --interactive
 
@@ -73,11 +73,11 @@ $ sudo apt-get install libcairo2-dev libjpeg-dev libgif-dev
 $ pip install pycairo
 
 
-5.1. Настройка Firewall для Django
+#### Настройка Firewall для Django
 $ sudo ufw allow 8000
 
 
-6. Ставим Nginx
+## Ставим Nginx
 $ sudo apt update
 $ sudo apt install nginx
 #Прописываем в конфигурации сайта Nginx
@@ -85,20 +85,20 @@ $ sudo apt install nginx
         try_files $uri $uri/ /index.html;
     }
 
-6.1. Настройка Firewall для Nginx
+#### Настройка Firewall для Nginx
 $ sudo ufw allow 'Nginx HTTP'
 
 $ sudo ufw allow 80
 $ sudo ufw allow 443
 
-7. Настройка Node.js и фронта
+## Настройка Node.js и фронта
 $ cd frontend
 $ npm install -g npm@latest
 $ rm packahe-lock.json
 $ npm install
 $ npm run serve|build
 
-7.1. Настройка Firewall для Vue
+#### Настройка Firewall для Vue
 $ sudo ufw allow 4545
 
 8. Вечный запуск менеджером процессов PM2
